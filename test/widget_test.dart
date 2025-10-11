@@ -7,9 +7,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:tea_diary_app/dashboard_screen/dashboard_screen.dart';
 
 import 'package:tea_diary_app/main.dart';
+import 'package:tea_diary_app/screens/dashboard_screen/dashboard_screen.dart';
 
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
