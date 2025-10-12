@@ -4,7 +4,7 @@ import '../custom_colors/custom_colors.dart';
 
 
 class CustomTextField extends StatelessWidget {
-  final TextEditingController controller;
+  final TextEditingController? controller;
   final String hintText;
   final TextInputType keyboardType;
   final int? maxLength;
@@ -17,12 +17,12 @@ class CustomTextField extends StatelessWidget {
   final TextInputAction? inputAction;
   final String? labelText;
   final EdgeInsets? contentPadding;
+  final String? initialValue;
   final int? maxLine;
 
   const CustomTextField({
     super.key,
     required this.keyboardType,
-    required this.controller,
     required this.hintText,
     this.maxLength,
     this.obsureText,
@@ -34,7 +34,9 @@ class CustomTextField extends StatelessWidget {
     this.labelText,
     this.inputAction,
     this.maxLine,
-    this.contentPadding
+    this.contentPadding,
+    this.initialValue,
+    this.controller,
   });
 
   @override
@@ -42,6 +44,7 @@ class CustomTextField extends StatelessWidget {
     return TextFormField(
       cursorColor: CustomColors.primaryColor,
       controller: controller,
+      initialValue: initialValue,
       keyboardType: keyboardType,
       maxLength: maxLength,
       validator: validator,
@@ -69,7 +72,8 @@ class CustomTextField extends StatelessWidget {
         labelStyle: TextStyle(color: CustomColors.blackColor),
         floatingLabelStyle: TextStyle(color: CustomColors.primaryColor),
         hintStyle: TextStyle(color: CustomColors.blackColor),
-        contentPadding: contentPadding
+        contentPadding: contentPadding,
+        counterText: "",
       ),
     );
   }

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:tea_diary_app/custom_colors/custom_colors.dart';
@@ -19,6 +21,15 @@ class _SellerScreenState extends State<SellerScreen> {
   String nameValue = "";
   String mobValue = "";
   String addValue = "";
+  var id;
+
+  bool _isEdit = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchSeller();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,11 +41,75 @@ class _SellerScreenState extends State<SellerScreen> {
         actions: [
           IconButton(
             onPressed: () {
+              _isEdit = false;
+              nameController.text = "";
+              mobileController.text = "";
+              addressController.text = "";
+
               openPopUpMenu();
             },
             icon: Icon(Icons.add, color: CustomColors.whiteColor),
           ),
         ],
+      ),
+      body: FutureBuilder(
+        future: _fetchSeller(),
+        builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+          if (snapshot.hasError) {
+            print("Network not found");
+          }
+
+          if (snapshot.hasData) {
+            return ListView.builder(
+              itemCount: snapshot.data.length,
+              itemBuilder: (context, index) {
+                return GestureDetector(
+                  onTap: () {
+                    _isEdit = true;
+                    nameController.text = snapshot.data[index]["seller_name"];
+                    mobileController.text = snapshot.data[index]["contact"];
+                    addressController.text = snapshot.data[index]["address"];
+                    id = snapshot.data[index]["id"];
+
+                    openPopUpMenu();
+                  },
+                  child: Card(
+                    child: ListTile(
+                      title: Row(
+                        children: [
+                          Icon(
+                            Icons.person_rounded,
+                            color: CustomColors.primaryColor,
+                          ),
+                          SizedBox(width: 3),
+                          Text(snapshot.data[index]["seller_name"]),
+                        ],
+                      ),
+                      trailing: Wrap(
+                        children: [
+                          Icon(
+                            Icons.call_outlined,
+                            color: CustomColors.primaryColor,
+                          ),
+                          SizedBox(width: 3),
+                          Text(
+                            snapshot.data[index]["contact"],
+                            style: TextStyle(fontSize: 16),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              },
+            );
+          }
+          return Center(
+            child: CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation(CustomColors.primaryColor),
+            ),
+          );
+        },
       ),
     );
   }
@@ -49,11 +124,18 @@ class _SellerScreenState extends State<SellerScreen> {
           actionsAlignment: MainAxisAlignment.center,
           title: Container(
             height: 40,
-            color: CustomColors.primaryColor,
+            decoration: BoxDecoration(
+              shape: BoxShape.rectangle,
+              color: CustomColors.primaryColor,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(25),
+                topRight: Radius.circular(25),
+              ),
+            ),
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text(
-                "Add New Seller",
+                _isEdit ? "Seller Details" : "Add New Seller",
                 style: TextStyle(color: CustomColors.whiteColor),
               ),
             ),
@@ -95,32 +177,96 @@ class _SellerScreenState extends State<SellerScreen> {
               ),
             ],
           ),
-          actions: <Widget>[
-            Padding(
-              padding: const EdgeInsets.only(top: 20.0),
-              child: TextButton(
-                style: ButtonStyle(
-                  backgroundColor: WidgetStatePropertyAll(
-                    CustomColors.primaryColor,
+          actions: _isEdit
+              ? [
+                  Padding(
+                    padding: const EdgeInsets.only(top: 20.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        TextButton(
+                          style: ElevatedButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            backgroundColor: CustomColors.primaryColor,
+                          ),
+                          onPressed: () {
+                            nameValue = nameController.text.toString();
+                            mobValue = mobileController.text.toString();
+                            addValue = addressController.text.toString();
+                            _updateSeller(nameValue, mobValue, addValue, id);
+
+                            Navigator.of(context).pop();
+                          },
+                          child: Text(
+                            'Update',
+                            style: TextStyle(
+                              color: CustomColors.whiteColor,
+                              fontSize: 21,
+                            ),
+                          ),
+                        ),
+                        TextButton(
+                          style: ElevatedButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            backgroundColor: CustomColors.primaryColor,
+                          ),
+                          onPressed: () {
+                            _deleteSeller(id);
+                            setState(() {});
+                            Navigator.of(context).pop();
+                          },
+                          child: Text(
+                            'Delete',
+                            style: TextStyle(
+                              color: CustomColors.whiteColor,
+                              fontSize: 21,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                onPressed: () {
-                  nameValue = nameController.text.toString();
-                  mobValue = mobileController.text.toString();
-                  addValue = addressController.text.toString();
-                  _addSeller(nameValue, mobValue, addValue);
-                  Navigator.of(context).pop();
-                },
-                child: Text(
-                  'Save',
-                  style: TextStyle(
-                    color: CustomColors.whiteColor,
-                    fontSize: 21,
+                ]
+              : [
+                  Padding(
+                    padding: const EdgeInsets.only(top: 20.0),
+                    child: TextButton(
+                      style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        backgroundColor: CustomColors.primaryColor,
+                      ),
+                      onPressed: () {
+                        nameValue = nameController.text.toString();
+                        mobValue = mobileController.text.toString();
+                        addValue = addressController.text.toString();
+                        _addSeller(nameValue, mobValue, addValue);
+
+                        setState(() {
+                          _isEdit = false;
+
+                          nameController.clear();
+                          mobileController.clear();
+                          addressController.clear();
+                        });
+
+                        Navigator.of(context).pop();
+                      },
+                      child: Text(
+                        'Save',
+                        style: TextStyle(
+                          color: CustomColors.whiteColor,
+                          fontSize: 21,
+                        ),
+                      ),
+                    ),
                   ),
-                ),
-              ),
-            ),
-          ],
+                ],
         );
       },
     );
@@ -143,5 +289,44 @@ class _SellerScreenState extends State<SellerScreen> {
     } else {
       print("Failed to add seller. Status: ${response.statusCode}");
     }
+    setState(() {});
+  }
+
+  Future<void> _fetchSeller() async {
+    var url = await Uri.parse(
+      "http://192.168.29.140/tea_diary/view_seller.php",
+    );
+    var resp = await http.get(url);
+    return jsonDecode(resp.body);
+  }
+
+  Future<void> _updateSeller(
+    String name,
+    String contact,
+    String add,
+    id,
+  ) async {
+    var url = await Uri.parse(
+      "http://192.168.29.140/tea_diary/update_seller.php",
+    );
+
+    var response = await http.post(
+      url,
+      body: {"id": id, "seller_name": name, "contact": contact, "address": add},
+    );
+    print("Seller updated");
+
+    if (response.statusCode == 200) {
+      print("update seller: ${response.body}");
+    } else {
+      print("Failed to update seller. Status: ${response.statusCode}");
+    }
+    setState(() {});
+  }
+
+  _deleteSeller(id) {
+    var url = Uri.parse("http://192.168.29.140/tea_diary/delete_seller.php");
+    http.post(url, body: {"id": id});
+    setState(() {});
   }
 }
