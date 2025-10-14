@@ -274,7 +274,7 @@ class _SellerScreenState extends State<SellerScreen> {
 
   Future<void> _addSeller(var name, var mobile, var address) async {
     var url = await Uri.parse(
-      "http://192.168.29.140/tea_diary/insert_seller.php",
+      "https://prakrutitech.xyz/vaishvi/insert_seller.php",
     );
 
     final response = await http.post(
@@ -294,7 +294,7 @@ class _SellerScreenState extends State<SellerScreen> {
 
   Future<void> _fetchSeller() async {
     var url = await Uri.parse(
-      "http://192.168.29.140/tea_diary/view_seller.php",
+      "https://prakrutitech.xyz/vaishvi/view_seller.php",
     );
     var resp = await http.get(url);
     return jsonDecode(resp.body);
@@ -307,7 +307,7 @@ class _SellerScreenState extends State<SellerScreen> {
     id,
   ) async {
     var url = await Uri.parse(
-      "http://192.168.29.140/tea_diary/update_seller.php",
+      "https://prakrutitech.xyz/vaishvi/update_seller.php",
     );
 
     var response = await http.post(
@@ -325,7 +325,7 @@ class _SellerScreenState extends State<SellerScreen> {
   }
 
   _deleteSeller(id) {
-    var url = Uri.parse("http://192.168.29.140/tea_diary/delete_seller.php");
+    var url = Uri.parse("https://prakrutitech.xyz/vaishvi/delete_seller.php");
     http.post(url, body: {"id": id});
     setState(() {});
   }
