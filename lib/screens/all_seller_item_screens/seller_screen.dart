@@ -25,10 +25,12 @@ class _SellerScreenState extends State<SellerScreen> {
 
   bool _isEdit = false;
 
+  late Future<List<dynamic>> sellerListFuture;
+
   @override
   void initState() {
     super.initState();
-    _fetchSeller();
+   sellerListFuture = _fetchSeller();
   }
 
   @override
@@ -53,7 +55,7 @@ class _SellerScreenState extends State<SellerScreen> {
         ],
       ),
       body: FutureBuilder(
-        future: _fetchSeller(),
+        future: sellerListFuture,
         builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
           if (snapshot.hasError) {
             print("Network not found");
@@ -289,10 +291,12 @@ class _SellerScreenState extends State<SellerScreen> {
     } else {
       print("Failed to add seller. Status: ${response.statusCode}");
     }
-    setState(() {});
+    setState(() {
+      sellerListFuture = _fetchSeller();
+    });
   }
 
-  Future<void> _fetchSeller() async {
+  Future<List<dynamic>> _fetchSeller()  async {
     var url = await Uri.parse(
       "https://prakrutitech.xyz/vaishvi/view_seller.php",
     );
@@ -321,12 +325,16 @@ class _SellerScreenState extends State<SellerScreen> {
     } else {
       print("Failed to update seller. Status: ${response.statusCode}");
     }
-    setState(() {});
+    setState(() {
+      sellerListFuture = _fetchSeller();
+    });
   }
 
-  _deleteSeller(id) {
+  Future<void> _deleteSeller(id) async{
     var url = Uri.parse("https://prakrutitech.xyz/vaishvi/delete_seller.php");
     http.post(url, body: {"id": id});
-    setState(() {});
+    setState(() {
+      sellerListFuture = _fetchSeller();
+    });
   }
 }

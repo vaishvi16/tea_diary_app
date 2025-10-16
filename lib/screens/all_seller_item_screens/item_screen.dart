@@ -35,8 +35,8 @@ class _ItemScreenState extends State<ItemScreen> {
         title: Text("Item List"),
         actions: [
           IconButton(
-            onPressed: () async{
-             await Navigator.push(
+            onPressed: () async {
+              await Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => AddItemScreen()),
               );
@@ -59,20 +59,26 @@ class _ItemScreenState extends State<ItemScreen> {
               itemCount: snapshot.data.length,
               itemBuilder: (context, index) {
                 return GestureDetector(
-                  onTap: () async{
+                  onTap: () async {
                     id = snapshot.data[index]["id"];
                     name = snapshot.data[index]["item_name"];
                     price = snapshot.data[index]["item_price"];
 
-                   await Navigator.push(
+                    final result = await Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => EditItemScreen(id: '$id', item_name: name, item_price: price,),
+                        builder: (context) => EditItemScreen(
+                          id: '$id',
+                          item_name: name,
+                          item_price: price,
+                        ),
                       ),
                     );
-                   setState(() {
-                     _fetchItems();
-                   });
+                    if (result == true) {
+                      setState(() {
+                        _fetchItems();
+                      });
+                    }
                   },
                   child: Card(
                     child: ListTile(

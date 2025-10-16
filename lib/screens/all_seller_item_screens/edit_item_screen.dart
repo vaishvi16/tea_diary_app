@@ -123,13 +123,13 @@ class _EditItemScreenState extends State<EditItemScreen> {
                     ),
                     backgroundColor: CustomColors.primaryColor,
                   ),
-                  onPressed: () {
+                  onPressed: () async {
                     if (_formKey.currentState!.validate()) {
                       String nameValue = nameController.text.toString();
                       String priceValue = priceController.text.toString();
 
-                      _updateItem(nameValue, priceValue, widget.id);
-                      Navigator.pop(context);
+                      await _updateItem(nameValue, priceValue, widget.id);
+                      Navigator.pop(context, true);
                     }
                   },
                   child: Text(
@@ -144,9 +144,9 @@ class _EditItemScreenState extends State<EditItemScreen> {
                     ),
                     backgroundColor: CustomColors.primaryColor,
                   ),
-                  onPressed: () {
-                    _deleteItem(widget.id);
-                    Navigator.pop(context);
+                  onPressed: () async {
+                    await _deleteItem(widget.id);
+                    Navigator.pop(context, true);
                   },
                   child: Text(
                     "Delete",
@@ -178,8 +178,8 @@ class _EditItemScreenState extends State<EditItemScreen> {
     }
   }
 
-  _deleteItem(id) {
+  Future<void> _deleteItem(id) async {
     var url = Uri.parse("https://prakrutitech.xyz/vaishvi/delete_item.php");
-    http.post(url, body: {"id": id});
+    await http.post(url, body: {"id": id});
   }
 }

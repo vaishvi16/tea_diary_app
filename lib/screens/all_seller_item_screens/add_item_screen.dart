@@ -73,7 +73,10 @@ class _AddItemScreenState extends State<AddItemScreen> {
                         children: [
                           SizedBox(
                             width: 70,
-                            child: Text("Price", style: TextStyle(fontSize: 16)),
+                            child: Text(
+                              "Price",
+                              style: TextStyle(fontSize: 16),
+                            ),
                           ),
                           Text(" : "),
                           const SizedBox(width: 10),
@@ -104,13 +107,13 @@ class _AddItemScreenState extends State<AddItemScreen> {
                 ),
                 backgroundColor: CustomColors.primaryColor,
               ),
-              onPressed: () {
+              onPressed: () async {
                 if (_formKey.currentState!.validate()) {
-                 nameValue = nameController.text.toString();
-                 priceValue = priceController.text.toString();
+                  nameValue = nameController.text.toString();
+                  priceValue = priceController.text.toString();
 
-                 _insertItem(nameValue, priceValue);
-                 Navigator.pop(context);
+                  await _insertItem(nameValue, priceValue);
+                   Navigator.pop(context, true);
                 }
               },
               child: Text(
@@ -124,20 +127,21 @@ class _AddItemScreenState extends State<AddItemScreen> {
     );
   }
 
-  Future<void> _insertItem(name, price) async{
-    var url = await Uri.parse("https://prakrutitech.xyz/vaishvi/insert_item.php");
+  Future<void> _insertItem(name, price) async {
+    var url = await Uri.parse(
+      "https://prakrutitech.xyz/vaishvi/insert_item.php",
+    );
 
-   var resp = await http.post(
-     url,
-     body: {"item_name": name, "item_price": price},
-   );
+    var resp = await http.post(
+      url,
+      body: {"item_name": name, "item_price": price},
+    );
 
     print("Item Inserted $name $price");
 
-    if(resp.statusCode == 200){
+    if (resp.statusCode == 200) {
       print("Added seller: ${resp.body}");
-    }
-    else{
+    } else {
       print("Failed to insert seller: ${resp.body}");
     }
   }
