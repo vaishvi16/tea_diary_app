@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:tea_diary_app/screens/new_order_screen/new_order_screen.dart';
 
 import '../../custom_colors/custom_colors.dart';
 import '../../custom_widgets/custom_appbar.dart';
@@ -23,6 +24,8 @@ class _SellerwiseItemScreenState extends State<SellerwiseItemScreen> {
 
   List<dynamic> itemList = [];
   List<bool> selectedItems = [];
+  List listItems = [];
+  var allItems;
 
   bool isLoading = true;
   bool showItemError = false;
@@ -67,15 +70,22 @@ class _SellerwiseItemScreenState extends State<SellerwiseItemScreen> {
   }
 
   Future<void> submitSellerWiseItems() async {
+    List<Map<String, dynamic>> selectedItemList = [];
+
     for (int i = 0; i < itemList.length; i++) {
       if (selectedItems[i]) {
         String itemName = itemList[i]['item_name'];
         String itemPrice = itemList[i]['item_price'];
 
+        selectedItemList.add({
+          "item_name": itemName,
+          "item_price": itemPrice,
+        });
+
         var url = Uri.parse(
           "https://prakrutitech.xyz/vaishvi/insert_item_seller_wise.php",
         );
-        var response = await http.post(
+        await http.post(
           url,
           body: {
             'seller_id': selectedSellerId ?? '',
@@ -83,18 +93,23 @@ class _SellerwiseItemScreenState extends State<SellerwiseItemScreen> {
             'item_price': itemPrice,
           },
         );
-
-        if (response.statusCode != 200) {
-          print("Failed to save item: $itemName");
-        }
       }
     }
 
-    ScaffoldMessenger.of(
+    Navigator.push(
       context,
-    ).showSnackBar(SnackBar(content: Text('Items saved successfully')));
-    Navigator.pop(context);
+      MaterialPageRoute(
+        builder: (context) => NewOrderScreen(
+          selectedItems: selectedItemList,
+        ),
+      ),
+    );
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Items saved successfully')),
+    );
   }
+
 
   @override
   Widget build(BuildContext context) {

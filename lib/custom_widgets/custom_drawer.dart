@@ -4,6 +4,7 @@ import 'package:tea_diary_app/screens/all_seller_item_screens/item_screen.dart';
 import 'package:tea_diary_app/screens/all_seller_item_screens/seller_screen.dart';
 import 'package:tea_diary_app/screens/all_seller_item_screens/sellerwise_item_screen.dart';
 import 'package:tea_diary_app/screens/bill_generate_history_screens/bill_generate_screen.dart';
+import 'package:tea_diary_app/screens/bill_generate_history_screens/bill_history_screen.dart';
 import '../custom_colors/custom_colors.dart';
 import '../screens/dashboard_screen/dashboard_screen.dart';
 
@@ -44,9 +45,9 @@ class _CustomDrawerState extends State<CustomDrawer> {
                   ItemScreen(),
                 ),
                 showMenuOptions(
-                  "Billing",
+                  "Bill History",
                   Icon(Icons.monetization_on_rounded),
-                  BillGenerateScreen(),
+                  BillHistoryScreen(),
                 ),
                 showMenuOptions(
                   "Sellerwise Item List",

@@ -25,7 +25,6 @@ class _CustomGridViewState extends State<CustomGridView> {
     Icons.coffee_rounded,
     Icons.person_pin,
     Icons.assignment_rounded,
-    Icons.monetization_on_rounded,
     Icons.history_outlined,
   ];
   List cardNameList = [
@@ -33,7 +32,6 @@ class _CustomGridViewState extends State<CustomGridView> {
     "Item",
     "Sellerwise Item",
     "New Order",
-    "Generate Bill",
     "Bill History",
   ];
 
@@ -102,12 +100,6 @@ class _CustomGridViewState extends State<CustomGridView> {
         );
         break;
       case 4:
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => BillGenerateScreen()),
-        );
-        break;
-      case 5:
         Navigator.push(
           context,
           MaterialPageRoute(
